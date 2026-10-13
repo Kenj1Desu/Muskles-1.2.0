@@ -141,4 +141,828 @@
 
     /* Moody Primary Action Button */
     .btn-moody-primary {
-      background:
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.55) 0%, rgba(15, 23, 42, 0.85) 50%, rgba(14, 116, 144, 0.55) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 
+        0 12px 30px -6px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(139, 92, 246, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+    }
+
+    /* Morphing Buttons & Steppers */
+    .morph-btn {
+      transition: transform 0.3s var(--spring), border-radius 0.3s var(--smooth), background 0.3s ease, border-color 0.3s ease;
+    }
+    .morph-btn:active {
+      transform: scale(0.93);
+      border-radius: 22px;
+    }
+
+    .stepper-btn {
+      transition: transform 0.28s var(--spring), border-radius 0.28s var(--smooth), background 0.2s ease;
+    }
+    .stepper-btn:active {
+      transform: scale(0.82);
+      border-radius: 50%;
+      background: rgba(168, 85, 247, 0.35);
+      border-color: rgba(34, 211, 238, 0.5);
+      color: #ffffff;
+    }
+
+    /* Tab & Set Entry Animations */
+    .tab-pane {
+      transition: opacity 0.35s var(--smooth), transform 0.38s var(--spring);
+    }
+
+    @keyframes setMorphIn {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.95);
+        border-radius: 34px;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        border-radius: 18px;
+      }
+    }
+    .animate-set-in {
+      animation: setMorphIn 0.4s var(--spring) forwards;
+    }
+
+    @keyframes overloadPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.12), inset 0 1px 0.5px rgba(255, 255, 255, 0.15); }
+      50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.25); }
+    }
+    .overload-glow {
+      animation: overloadPulse 3.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="pb-32">
+
+  <!-- Subdued Moody Liquid Aurora -->
+  <div class="aurora-bg">
+    <div class="morph-blob blob-1"></div>
+    <div class="morph-blob blob-2"></div>
+    <div class="morph-blob blob-3"></div>
+  </div>
+
+  <!-- Sticky Frosted Header -->
+  <header class="glass-bar sticky top-0 z-40 px-4 py-3.5 flex justify-between items-center border-t-0 border-x-0">
+    <div class="flex items-center gap-3">
+      <!-- Atomic Orbital Icon -->
+      <div class="w-10 h-10 rounded-2xl glass-card flex items-center justify-center">
+        <svg class="w-5 h-5 text-purple-300/90 drop-shadow-[0_0_6px_rgba(168,85,247,0.5)] animate-[spin_28s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="2" fill="currentColor"/>
+          <ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(30 12 12)"/>
+          <ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(-30 12 12)"/>
+          <ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(90 12 12)"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-base font-extrabold tracking-wider text-slate-100">KENJI LIFTS</h1>
+        <p id="user-stats-banner" class="text-[10px] text-slate-500 font-semibold tracking-widest uppercase">BW: -- kg</p>
+      </div>
+    </div>
+    
+    <!-- Stopwatch Pill -->
+    <button onclick="toggleTimerModal()" id="timer-badge" class="morph-btn flex items-center gap-1.5 px-3.5 py-2 rounded-full glass-card text-[10px] font-extrabold text-cyan-400/90 tracking-widest">
+      <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span id="timer-display">REST</span>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-4 max-w-md mx-auto space-y-4 relative z-10">
+
+    <!-- TAB 1: WORKOUT LOGGING -->
+    <section id="tab-log" class="space-y-4 tab-pane">
+      
+      <!-- Split Selector -->
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block pl-1">Workout Split</label>
+        <div class="grid grid-cols-2 gap-2.5" id="split-buttons"></div>
+      </div>
+
+      <!-- Exercise Dropdown -->
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block pl-1">Selected Exercise</label>
+        <div class="relative">
+          <select id="exercise-select" onchange="renderExerciseDetails()" class="w-full appearance-none glass-card rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-100 focus:outline-none pr-10"></select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-purple-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Smoked Frosted Card -->
+      <div class="glass-card rounded-[28px] p-5 space-y-4">
+        <div class="flex justify-between items-center">
+          <span id="target-muscle-badge" class="text-[10px] font-extrabold px-3.5 py-1 rounded-full bg-purple-950/50 text-purple-300 border border-purple-500/25 tracking-widest uppercase">CHEST</span>
+          <span id="lift-rating-badge" class="text-xs font-extrabold text-cyan-400/80 tracking-wide">Rating: --</span>
+        </div>
+
+        <div class="glass-well p-3.5 rounded-2xl text-[11px] leading-relaxed">
+          <span class="text-slate-500 font-bold tracking-widest uppercase block mb-1">Previous Session</span>
+          <p id="prev-log-display" class="text-slate-300 italic">No logged lifts for this exercise.</p>
+        </div>
+
+        <!-- Steppers -->
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3.5">
+            <div class="glass-well p-3 rounded-2xl space-y-1.5">
+              <label class="text-[10px] font-bold text-slate-500 block text-center uppercase tracking-widest">Weight (kg)</label>
+              <div class="flex items-center justify-between">
+                <button onclick="adjustInput('input-weight', -2.5)" class="stepper-btn w-9 h-9 rounded-xl glass-card text-slate-300 font-bold text-lg flex items-center justify-center">-</button>
+                <input type="number" id="input-weight" placeholder="0" step="0.5" class="w-full bg-transparent text-center font-black text-xl text-slate-100 focus:outline-none" />
+                <button onclick="adjustInput('input-weight', 2.5)" class="stepper-btn w-9 h-9 rounded-xl glass-card text-slate-300 font-bold text-lg flex items-center justify-center">+</button>
+              </div>
+            </div>
+
+            <div class="glass-well p-3 rounded-2xl space-y-1.5">
+              <label class="text-[10px] font-bold text-slate-500 block text-center uppercase tracking-widest">Reps</label>
+              <div class="flex items-center justify-between">
+                <button onclick="adjustInput('input-reps', -1)" class="stepper-btn w-9 h-9 rounded-xl glass-card text-slate-300 font-bold text-lg flex items-center justify-center">-</button>
+                <input type="number" id="input-reps" placeholder="0" class="w-full bg-transparent text-center font-black text-xl text-cyan-400 focus:outline-none" />
+                <button onclick="adjustInput('input-reps', 1)" class="stepper-btn w-9 h-9 rounded-xl glass-card text-slate-300 font-bold text-lg flex items-center justify-center">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moody Smoked Log Button -->
+          <button onclick="logCurrentSet()" class="morph-btn btn-moody-primary w-full text-slate-100 font-black py-4 rounded-2xl text-xs tracking-widest uppercase">
+            Log Set
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Session Sets -->
+      <div class="space-y-3 pt-1">
+        <div class="flex justify-between items-center px-1">
+          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Workout Sets</span>
+          <span id="session-count" class="text-purple-300/90 font-black text-xs">0 sets</span>
+        </div>
+
+        <div id="session-sets-list" class="space-y-2.5 text-xs"></div>
+
+        <!-- Complete Workout Button -->
+        <div id="finish-workout-container" class="pt-2 hidden">
+          <button onclick="finishWorkoutSession()" class="morph-btn w-full py-4 rounded-2xl bg-cyan-950/60 border border-cyan-500/30 text-cyan-200 font-black text-xs tracking-widest uppercase shadow-[0_10px_25px_rgba(0,0,0,0.8)]">
+            ✓ Complete & Save Workout
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: HISTORY & PAST DAYS -->
+    <section id="tab-history" class="space-y-4 hidden tab-pane">
+      <div class="grid grid-cols-2 gap-2 glass-card p-1.5 rounded-2xl">
+        <button onclick="switchHistorySubTab('workouts')" id="subtab-workouts-btn" class="morph-btn py-2.5 rounded-xl text-xs font-extrabold bg-purple-950/60 text-purple-200 border border-purple-500/30 shadow-sm">Past Workouts</button>
+        <button onclick="switchHistorySubTab('overload')" id="subtab-overload-btn" class="morph-btn py-2.5 rounded-xl text-xs font-bold text-slate-500">Exercise Progress</button>
+      </div>
+
+      <!-- Past Workouts Archive -->
+      <div id="view-past-workouts" class="space-y-3">
+        <div id="past-workouts-list" class="space-y-3"></div>
+      </div>
+
+      <!-- Progressive Overload View -->
+      <div id="view-overload-timeline" class="space-y-4 hidden">
+        <div class="relative">
+          <select id="history-filter" onchange="renderHistory()" class="w-full appearance-none glass-card rounded-2xl px-4 py-3.5 text-xs font-bold text-slate-100 focus:outline-none pr-10"></select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-purple-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div id="history-timeline" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: VOLUME ANALYTICS -->
+    <section id="tab-analytics" class="space-y-4 hidden tab-pane">
+      <h2 class="text-sm font-extrabold text-slate-200 uppercase tracking-widest pl-1">Volume & Distribution</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card p-4 rounded-3xl">
+          <span class="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">Total Volume</span>
+          <p id="stat-total-volume" class="text-lg font-black text-cyan-400 mt-1.5">0 kg</p>
+        </div>
+        <div class="glass-card p-4 rounded-3xl">
+          <span class="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">Total Sets</span>
+          <p id="stat-total-sets" class="text-lg font-black text-purple-300 mt-1.5">0</p>
+        </div>
+      </div>
+
+      <div class="glass-card p-5 rounded-3xl space-y-4">
+        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Primary Muscle Load</h3>
+        <div id="muscle-breakdown" class="space-y-3.5"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: PROFILE & BACKUP -->
+    <section id="tab-profile" class="space-y-4 hidden tab-pane">
+      <h2 class="text-sm font-extrabold text-slate-200 uppercase tracking-widest pl-1">Biometrics & Backups</h2>
+      <div class="glass-card p-5 rounded-3xl space-y-4">
+        <div>
+          <label class="text-[10px] text-slate-500 font-bold uppercase tracking-widest block mb-1.5">Body Weight (kg)</label>
+          <input type="number" id="input-bw" placeholder="0" step="0.5" class="w-full glass-well rounded-2xl p-3.5 text-sm font-bold text-slate-100 focus:border-purple-500/40 focus:outline-none" />
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-500 font-bold uppercase tracking-widest block mb-1.5">Height (cm)</label>
+          <input type="number" id="input-height" placeholder="0" class="w-full glass-well rounded-2xl p-3.5 text-sm font-bold text-slate-100 focus:border-purple-500/40 focus:outline-none" />
+        </div>
+        <button onclick="saveUserProfile()" class="morph-btn btn-moody-primary w-full text-slate-100 font-black py-3.5 rounded-2xl text-xs tracking-widest uppercase">
+          Update Biometrics
+        </button>
+      </div>
+
+      <div class="glass-card p-5 rounded-3xl space-y-4">
+        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Data Backup</h3>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="exportData()" class="morph-btn glass-well hover:border-white/15 py-3 rounded-2xl text-xs font-bold text-slate-300">Export JSON</button>
+          <button onclick="document.getElementById('import-file').click()" class="morph-btn glass-well hover:border-white/15 py-3 rounded-2xl text-xs font-bold text-slate-300">Import JSON</button>
+          <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json" />
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rest Stopwatch Modal -->
+  <div id="timer-modal" class="fixed inset-0 bg-black/80 backdrop-blur-2xl z-50 flex items-end sm:items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-[32px] p-6 w-full max-w-xs text-center space-y-5 animate-set-in">
+      <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Recovery Countdown</h3>
+      <div id="modal-timer-countdown" class="text-5xl font-black text-slate-100 drop-shadow-[0_0_12px_rgba(168,85,247,0.35)] tracking-wider">00:00</div>
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="startRestTimer(60)" class="morph-btn glass-well py-2.5 rounded-xl text-xs font-bold text-slate-300">60s</button>
+        <button onclick="startRestTimer(90)" class="morph-btn glass-well py-2.5 rounded-xl text-xs font-bold text-cyan-400 border-cyan-500/25">90s</button>
+        <button onclick="startRestTimer(120)" class="morph-btn glass-well py-2.5 rounded-xl text-xs font-bold text-slate-300">120s</button>
+      </div>
+      <button onclick="toggleTimerModal()" class="w-full py-2 text-xs font-extrabold text-slate-500 hover:text-slate-300 uppercase tracking-widest">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- Floating Smoked Glass Navigation Dock -->
+  <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto glass-bar rounded-[28px] p-2 z-40 flex justify-around items-center">
+    <button onclick="switchTab('log')" id="nav-log" class="morph-btn flex flex-col items-center gap-1 text-purple-200 bg-purple-950/50 border border-purple-500/30 rounded-2xl py-1.5 px-4 shadow-sm">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M12 4v16m8-8H4"/></svg>
+      <span class="text-[9px] font-bold uppercase tracking-wider">Log</span>
+    </button>
+    <button onclick="switchTab('history')" id="nav-history" class="morph-btn flex flex-col items-center gap-1 text-slate-500 py-1.5 px-4 rounded-2xl border border-transparent">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      <span class="text-[9px] font-bold uppercase tracking-wider">History</span>
+    </button>
+    <button onclick="switchTab('analytics')" id="nav-analytics" class="morph-btn flex flex-col items-center gap-1 text-slate-500 py-1.5 px-4 rounded-2xl border border-transparent">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span class="text-[9px] font-bold uppercase tracking-wider">Volume</span>
+    </button>
+    <button onclick="switchTab('profile')" id="nav-profile" class="morph-btn flex flex-col items-center gap-1 text-slate-500 py-1.5 px-4 rounded-2xl border border-transparent">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span class="text-[9px] font-bold uppercase tracking-wider">Profile</span>
+    </button>
+  </nav>
+
+  <script>
+    const ROUTINES = {
+      "Push": [
+        { name: "Incline DB. Press", muscle: "Upper Chest" },
+        { name: "Cable Lat Raise", muscle: "Side Delts" },
+        { name: "Machine Press (CL)", muscle: "Chest" },
+        { name: "Overhead Tri. Ext. Bar", muscle: "Triceps" },
+        { name: "Tri. Pushdown Bar", muscle: "Triceps" },
+        { name: "Pec Fly (Upper/Lower)", muscle: "Chest" }
+      ],
+      "Pull": [
+        { name: "Machine Pullovers", muscle: "Lats" },
+        { name: "Wide Grip Row", muscle: "Upper Back" },
+        { name: "Close grip Machine row", muscle: "Lats" },
+        { name: "Cable Rear delt flys", muscle: "Rear Delts" },
+        { name: "Shrugs", muscle: "Traps" },
+        { name: "Bayesian Curl", muscle: "Biceps" },
+        { name: "Hammer/Preacher Curl", muscle: "Biceps" }
+      ],
+      "Legs": [
+        { name: "Hack Squat", muscle: "Quads" },
+        { name: "Seated Hamstring Curl", muscle: "Hamstrings" },
+        { name: "Leg Extension", muscle: "Quads" },
+        { name: "Hip Adductor", muscle: "Adductors" },
+        { name: "Hip Thrust", muscle: "Glutes" },
+        { name: "Bayesian Curl", muscle: "Biceps" },
+        { name: "Standing Calf Raise", muscle: "Calves" }
+      ],
+      "Arm-Shoulder": [
+        { name: "Machine Shoulder Press", muscle: "Front Delts" },
+        { name: "Bayesian Curl", muscle: "Biceps" },
+        { name: "Cable Lateral Raise", muscle: "Side Delts" },
+        { name: "Overhead Triceps Extension", muscle: "Triceps" },
+        { name: "Preacher Curl", muscle: "Biceps" },
+        { name: "Triceps Pushdown", muscle: "Triceps" }
+      ]
+    };
+
+    let currentSplit = "Push";
+    let logs = JSON.parse(localStorage.getItem("iron_logs") || "[]");
+    let activeSessionSets = JSON.parse(localStorage.getItem("iron_active_session") || "[]");
+    let userProfile = JSON.parse(localStorage.getItem("iron_profile") || '{"weight": 70, "height": 175}');
+    let restTimerInterval = null;
+    let restTimeRemaining = 0;
+
+    function init() {
+      renderSplitButtons();
+      populateExerciseSelect();
+      updateProfileDisplay();
+      renderExerciseDetails();
+      renderActiveSession();
+      populateHistoryFilter();
+    }
+
+    function switchTab(tabId) {
+      ['log', 'history', 'analytics', 'profile'].forEach(t => {
+        const pane = document.getElementById(`tab-${t}`);
+        pane.classList.add('hidden');
+        pane.style.opacity = '0';
+        pane.style.transform = 'translateY(12px) scale(0.97)';
+        const navEl = document.getElementById(`nav-${t}`);
+        navEl.className = "morph-btn flex flex-col items-center gap-1 text-slate-500 py-1.5 px-4 rounded-2xl border border-transparent";
+      });
+      
+      const activePane = document.getElementById(`tab-${tabId}`);
+      activePane.classList.remove('hidden');
+      setTimeout(() => {
+        activePane.style.opacity = '1';
+        activePane.style.transform = 'translateY(0) scale(1)';
+      }, 30);
+
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      activeNav.className = "morph-btn flex flex-col items-center gap-1 text-purple-200 bg-purple-950/50 border border-purple-500/30 rounded-2xl py-1.5 px-4 shadow-sm scale-105";
+
+      if (tabId === 'history') {
+        renderPastWorkouts();
+        renderHistory();
+      }
+      if (tabId === 'analytics') renderAnalytics();
+      if (tabId === 'log') {
+        renderExerciseDetails();
+        renderActiveSession();
+      }
+    }
+
+    function renderSplitButtons() {
+      const container = document.getElementById('split-buttons');
+      container.innerHTML = Object.keys(ROUTINES).map(split => `
+        <button onclick="setSplit('${split}')" class="morph-btn py-3 px-3 text-xs font-extrabold rounded-2xl transition-all ${
+          currentSplit === split 
+            ? 'glass-card text-purple-200 border-purple-500/40 shadow-[0_0_20px_rgba(88,28,135,0.35)] scale-[1.02]' 
+            : 'glass-well text-slate-500 hover:text-slate-300'
+        }">${split}</button>
+      `).join('');
+    }
+
+    function setSplit(split) {
+      currentSplit = split;
+      renderSplitButtons();
+      populateExerciseSelect();
+      renderExerciseDetails();
+    }
+
+    function populateExerciseSelect() {
+      const select = document.getElementById('exercise-select');
+      const exercises = ROUTINES[currentSplit];
+      select.innerHTML = exercises.map(ex => `<option value="${ex.name}" class="bg-[#05050a] text-slate-200">${ex.name}</option>`).join('');
+    }
+
+    function getSelectedExerciseObj() {
+      const exName = document.getElementById('exercise-select').value;
+      for (const split in ROUTINES) {
+        const found = ROUTINES[split].find(e => e.name === exName);
+        if (found) return found;
+      }
+      return { name: exName, muscle: "Other" };
+    }
+
+    function renderExerciseDetails() {
+      const ex = getSelectedExerciseObj();
+      document.getElementById('target-muscle-badge').innerText = ex.muscle;
+
+      const allSets = [...logs, ...activeSessionSets];
+      const exerciseLogs = allSets.filter(l => l.exercise === ex.name);
+      const prevDisplay = document.getElementById('prev-log-display');
+      const ratingBadge = document.getElementById('lift-rating-badge');
+
+      if (exerciseLogs.length === 0) {
+        prevDisplay.innerHTML = `<span class="text-slate-600 italic">No logged lifts for this exercise.</span>`;
+        ratingBadge.innerText = "Rating: --";
+        return;
+      }
+
+      const latestDate = exerciseLogs[exerciseLogs.length - 1].date;
+      const latestSessionSets = exerciseLogs.filter(l => l.date === latestDate);
+      prevDisplay.innerHTML = `<span class="text-cyan-400 font-bold">${latestDate}:</span> ` + latestSessionSets.map((s, i) => `S${i+1}: <strong>${s.weight}kg × ${s.reps}</strong>`).join(', ');
+
+      let maxE1RM = 0;
+      exerciseLogs.forEach(s => {
+        const e1rm = s.weight * (1 + s.reps / 30);
+        if (e1rm > maxE1RM) maxE1RM = e1rm;
+      });
+
+      const bw = userProfile.weight || 70;
+      const ratio = (maxE1RM / bw).toFixed(2);
+      let tier = "Beginner";
+      if (ratio >= 1.5) tier = "Advanced";
+      else if (ratio >= 1.1) tier = "Intermediate";
+      else if (ratio >= 0.75) tier = "Novice";
+
+      ratingBadge.innerText = `Rating: ${tier} (${ratio}x BW)`;
+    }
+
+    function adjustInput(id, delta) {
+      const el = document.getElementById(id);
+      let val = parseFloat(el.value) || 0;
+      val = Math.max(0, val + delta);
+      el.value = (val % 1 !== 0) ? val.toFixed(1) : val;
+    }
+
+    function logCurrentSet() {
+      const weight = parseFloat(document.getElementById('input-weight').value);
+      const reps = parseInt(document.getElementById('input-reps').value, 10);
+      const ex = getSelectedExerciseObj();
+
+      if (isNaN(weight) || isNaN(reps) || reps <= 0) {
+        alert("Please enter a valid weight and reps count.");
+        return;
+      }
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const entry = {
+        id: Date.now() + Math.random(),
+        date: today,
+        time: timeStr,
+        split: currentSplit,
+        exercise: ex.name,
+        muscle: ex.muscle,
+        weight: weight,
+        reps: reps,
+        volume: weight * reps
+      };
+
+      activeSessionSets.push(entry);
+      localStorage.setItem("iron_active_session", JSON.stringify(activeSessionSets));
+
+      document.getElementById('input-reps').value = '';
+      renderExerciseDetails();
+      renderActiveSession();
+      startRestTimer(90);
+    }
+
+    function renderActiveSession() {
+      const list = document.getElementById('session-sets-list');
+      const finishBtnContainer = document.getElementById('finish-workout-container');
+      document.getElementById('session-count').innerText = `${activeSessionSets.length} sets`;
+
+      if (activeSessionSets.length === 0) {
+        list.innerHTML = `<p class="text-slate-600 italic text-center py-2.5">No active sets right now. Start logging above!</p>`;
+        finishBtnContainer.classList.add('hidden');
+        return;
+      }
+
+      finishBtnContainer.classList.remove('hidden');
+
+      list.innerHTML = activeSessionSets.slice().reverse().map(s => `
+        <div class="glass-card p-3.5 rounded-2xl flex justify-between items-center animate-set-in">
+          <div>
+            <div class="font-extrabold text-slate-200 text-xs">${s.exercise}</div>
+            <div class="text-[9px] text-purple-300/80 font-bold tracking-wider uppercase">${s.muscle} • ${s.split}</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <span class="font-black text-sm text-cyan-300">${s.weight} kg × ${s.reps}</span>
+              <span class="text-slate-500 text-[9px] block font-bold uppercase tracking-wide">${s.volume.toLocaleString()} kg vol</span>
+            </div>
+            <button onclick="deleteActiveSet(${s.id})" class="morph-btn text-rose-400/80 hover:text-rose-300 p-2 rounded-xl glass-well">
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteActiveSet(setId) {
+      activeSessionSets = activeSessionSets.filter(s => s.id !== setId);
+      localStorage.setItem("iron_active_session", JSON.stringify(activeSessionSets));
+      renderActiveSession();
+      renderExerciseDetails();
+    }
+
+    function finishWorkoutSession() {
+      if (activeSessionSets.length === 0) return;
+
+      const totalVol = activeSessionSets.reduce((acc, s) => acc + s.volume, 0);
+      const confirmMsg = `Complete workout?\n• ${activeSessionSets.length} Sets Logged\n• ${totalVol.toLocaleString()} kg Total Volume`;
+      if (!confirm(confirmMsg)) return;
+
+      logs = [...logs, ...activeSessionSets];
+      localStorage.setItem("iron_logs", JSON.stringify(logs));
+
+      activeSessionSets = [];
+      localStorage.removeItem("iron_active_session");
+
+      renderActiveSession();
+      renderExerciseDetails();
+      alert("Workout Completed & Saved to History!");
+    }
+
+    function switchHistorySubTab(tab) {
+      const workoutsBtn = document.getElementById('subtab-workouts-btn');
+      const overloadBtn = document.getElementById('subtab-overload-btn');
+      const workoutsView = document.getElementById('view-past-workouts');
+      const overloadView = document.getElementById('view-overload-timeline');
+
+      if (tab === 'workouts') {
+        workoutsBtn.className = "morph-btn py-2.5 rounded-xl text-xs font-extrabold bg-purple-950/60 text-purple-200 border border-purple-500/30 shadow-sm";
+        overloadBtn.className = "morph-btn py-2.5 rounded-xl text-xs font-bold text-slate-500";
+        workoutsView.classList.remove('hidden');
+        overloadView.classList.add('hidden');
+        renderPastWorkouts();
+      } else {
+        overloadBtn.className = "morph-btn py-2.5 rounded-xl text-xs font-extrabold bg-purple-950/60 text-purple-200 border border-purple-500/30 shadow-sm";
+        workoutsBtn.className = "morph-btn py-2.5 rounded-xl text-xs font-bold text-slate-500";
+        overloadView.classList.remove('hidden');
+        workoutsView.classList.add('hidden');
+        renderHistory();
+      }
+    }
+
+    function renderPastWorkouts() {
+      const container = document.getElementById('past-workouts-list');
+      if (logs.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-600 py-6 text-center">No completed workouts yet. Log and hit "Complete Workout" to see them here.</p>`;
+        return;
+      }
+
+      const sessionsByDate = {};
+      logs.forEach(s => {
+        if (!sessionsByDate[s.date]) sessionsByDate[s.date] = [];
+        sessionsByDate[s.date].push(s);
+      });
+
+      const dates = Object.keys(sessionsByDate).sort().reverse();
+
+      container.innerHTML = dates.map(date => {
+        const sets = sessionsByDate[date];
+        const dayVol = sets.reduce((acc, s) => acc + s.volume, 0);
+        const splitTag = sets[0].split || "Routine";
+
+        return `
+          <div class="glass-card rounded-3xl p-4 space-y-3 animate-set-in">
+            <div class="flex justify-between items-center cursor-pointer" onclick="toggleSessionExpand('${date}')">
+              <div>
+                <span class="text-xs font-black text-slate-200">${date}</span>
+                <span class="text-[9px] font-bold text-purple-300 uppercase px-2.5 py-0.5 rounded-full bg-purple-950/50 ml-1.5 border border-purple-500/25">${splitTag}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-cyan-400">${dayVol.toLocaleString()} kg</span>
+                <span class="text-[10px] text-slate-500 block font-semibold">${sets.length} sets ▾</span>
+              </div>
+            </div>
+
+            <div id="session-detail-${date}" class="space-y-2 pt-2 border-t border-white/5">
+              ${sets.map((s) => `
+                <div class="flex justify-between items-center glass-well px-3 py-2 rounded-2xl text-xs">
+                  <div>
+                    <span class="font-bold text-slate-200 block">${s.exercise}</span>
+                    <span class="text-[9px] text-slate-500 font-semibold uppercase">${s.muscle}</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="font-black text-cyan-300">${s.weight} kg × ${s.reps}</span>
+                    <button onclick="deleteArchivedSet(${s.id})" class="text-rose-400/80 hover:text-rose-300 p-1 rounded-lg bg-rose-950/30 border border-rose-800/30">
+                      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+              <div class="pt-1 flex justify-end">
+                <button onclick="deleteEntireDay('${date}')" class="text-[10px] text-rose-400/80 font-bold uppercase tracking-wider py-1 px-2.5 rounded-lg border border-rose-900/40 hover:bg-rose-950/30">
+                  Delete Session
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleSessionExpand(date) {
+      const el = document.getElementById(`session-detail-${date}`);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function deleteArchivedSet(setId) {
+      if (!confirm("Delete this set from history?")) return;
+      logs = logs.filter(l => l.id !== setId);
+      localStorage.setItem("iron_logs", JSON.stringify(logs));
+      renderPastWorkouts();
+      renderHistory();
+      renderAnalytics();
+      renderExerciseDetails();
+    }
+
+    function deleteEntireDay(date) {
+      if (!confirm(`Delete all workout logs for ${date}?`)) return;
+      logs = logs.filter(l => l.date !== date);
+      localStorage.setItem("iron_logs", JSON.stringify(logs));
+      renderPastWorkouts();
+      renderHistory();
+      renderAnalytics();
+      renderExerciseDetails();
+    }
+
+    function populateHistoryFilter() {
+      const select = document.getElementById('history-filter');
+      const allExercises = [];
+      Object.values(ROUTINES).forEach(list => list.forEach(item => {
+        if (!allExercises.includes(item.name)) allExercises.push(item.name);
+      }));
+      select.innerHTML = allExercises.map(e => `<option value="${e}" class="bg-[#05050a] text-slate-200">${e}</option>`).join('');
+    }
+
+    function renderHistory() {
+      const selected = document.getElementById('history-filter').value;
+      const historyList = logs.filter(l => l.exercise === selected);
+      const container = document.getElementById('history-timeline');
+
+      if (historyList.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-600 py-4 text-center">No logs found for ${selected}.</p>`;
+        return;
+      }
+
+      const grouped = {};
+      historyList.forEach(s => {
+        if (!grouped[s.date]) grouped[s.date] = [];
+        grouped[s.date].push(s);
+      });
+
+      const dates = Object.keys(grouped).sort();
+      let html = '';
+      let prevBest1RM = 0;
+
+      dates.forEach(d => {
+        const sets = grouped[d];
+        const dayVol = sets.reduce((acc, s) => acc + s.volume, 0);
+        const dayMax1RM = Math.max(...sets.map(s => s.weight * (1 + s.reps / 30)));
+
+        let overloadNotice = '';
+        let glowClass = '';
+        if (prevBest1RM > 0) {
+          if (dayMax1RM > prevBest1RM) {
+            overloadNotice = `<span class="text-cyan-300 font-black tracking-widest text-[9px] bg-cyan-950/60 px-2.5 py-0.5 rounded-full border border-cyan-500/30 ml-1.5 uppercase">▲ OVERLOAD</span>`;
+            glowClass = 'overload-glow';
+          } else if (dayMax1RM < prevBest1RM) {
+            overloadNotice = `<span class="text-rose-400/80 font-bold text-[9px] ml-1.5">▼ Drop</span>`;
+          }
+        }
+        prevBest1RM = dayMax1RM;
+
+        html += `
+          <div class="glass-card p-4 rounded-3xl space-y-2 animate-set-in ${glowClass}">
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="font-extrabold text-slate-200 text-xs">${d} ${overloadNotice}</span>
+              <span class="text-cyan-400 font-extrabold text-xs">${dayVol.toLocaleString()} kg</span>
+            </div>
+            <div class="space-y-1.5 pt-0.5">
+              ${sets.map((s, idx) => `
+                <div class="flex justify-between items-center glass-well px-3 py-1.5 rounded-xl text-xs">
+                  <span class="text-slate-400">Set ${idx+1}: <strong class="text-slate-200">${s.weight}kg × ${s.reps}</strong></span>
+                  <span class="text-slate-500 text-[10px] font-bold">${s.volume} kg vol</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderAnalytics() {
+      const allSets = [...logs, ...activeSessionSets];
+      const totalVol = allSets.reduce((acc, s) => acc + s.volume, 0);
+      document.getElementById('stat-total-volume').innerText = `${totalVol.toLocaleString()} kg`;
+      document.getElementById('stat-total-sets').innerText = allSets.length;
+
+      const muscleVol = {};
+      allSets.forEach(s => {
+        muscleVol[s.muscle] = (muscleVol[s.muscle] || 0) + s.volume;
+      });
+
+      const sortedMuscles = Object.entries(muscleVol).sort((a, b) => b[1] - a[1]);
+      const breakdownEl = document.getElementById('muscle-breakdown');
+
+      if (sortedMuscles.length === 0) {
+        breakdownEl.innerHTML = `<p class="text-xs text-slate-600 py-4 text-center">Log workouts to see distribution.</p>`;
+        return;
+      }
+
+      const maxMVol = sortedMuscles[0][1] || 1;
+      breakdownEl.innerHTML = sortedMuscles.map(([muscle, vol]) => {
+        const pct = Math.round((vol / maxMVol) * 100);
+        return `
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs items-center">
+              <span class="font-bold text-slate-300">${muscle}</span>
+              <span class="text-cyan-400/90 font-bold">${vol.toLocaleString()} kg</span>
+            </div>
+            <div class="w-full glass-well rounded-full h-2.5 overflow-hidden p-[1.5px]">
+              <div class="bg-gradient-to-r from-purple-700 via-indigo-600 to-cyan-500 h-full rounded-full transition-all duration-700" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* Stopwatch Functions */
+    function toggleTimerModal() {
+      document.getElementById('timer-modal').classList.toggle('hidden');
+    }
+
+    function startRestTimer(seconds) {
+      clearInterval(restTimerInterval);
+      restTimeRemaining = seconds;
+      updateTimerDisplay();
+      document.getElementById('timer-modal').classList.add('hidden');
+
+      restTimerInterval = setInterval(() => {
+        restTimeRemaining--;
+        updateTimerDisplay();
+        if (restTimeRemaining <= 0) {
+          clearInterval(restTimerInterval);
+          document.getElementById('timer-display').innerText = "DONE";
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(restTimeRemaining / 60);
+      const s = restTimeRemaining % 60;
+      const str = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      document.getElementById('timer-display').innerText = str;
+      document.getElementById('modal-timer-countdown').innerText = str;
+    }
+
+    /* Backup / Restore */
+    function exportData() {
+      const blob = new Blob([JSON.stringify({ logs, activeSessionSets, userProfile })], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `KenjiLifts_Backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+    }
+
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.logs) logs = data.logs;
+          if (data.activeSessionSets) activeSessionSets = data.activeSessionSets;
+          if (data.userProfile) userProfile = data.userProfile;
+          localStorage.setItem("iron_logs", JSON.stringify(logs));
+          localStorage.setItem("iron_active_session", JSON.stringify(activeSessionSets));
+          localStorage.setItem("iron_profile", JSON.stringify(userProfile));
+          init();
+          alert("Backup restored!");
+        } catch (err) {
+          alert("Invalid backup file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function saveUserProfile() {
+      const w = parseFloat(document.getElementById('input-bw').value);
+      const h = parseFloat(document.getElementById('input-height').value);
+      if (w) userProfile.weight = w;
+      if (h) userProfile.height = h;
+      localStorage.setItem("iron_profile", JSON.stringify(userProfile));
+      updateProfileDisplay();
+      renderExerciseDetails();
+      alert("Biometrics Updated!");
+    }
+
+    function updateProfileDisplay() {
+      document.getElementById('user-stats-banner').innerText = `BW: ${userProfile.weight || '--'} kg | Ht: ${userProfile.height || '--'} cm`;
+      document.getElementById('input-bw').value = userProfile.weight || '';
+      document.getElementById('input-height').value = userProfile.height || '';
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
